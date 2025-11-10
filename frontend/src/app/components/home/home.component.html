@@ -1,0 +1,56 @@
+<div class="home-container">
+  <div *ngIf="loading" class="loading">Loading...</div>
+  
+  <div *ngIf="error" class="error">{{ error }}</div>
+  
+  <div *ngIf="barberInfo && !loading" class="content">
+    <header class="hero">
+      <div class="hero-content">
+        <h1>{{ barberInfo.name }}</h1>
+        <p class="tagline">{{ barberInfo.bio }}</p>
+        <div class="cta-buttons">
+          <a routerLink="/booking" class="btn btn-primary">Book Appointment</a>
+          <a routerLink="/portfolio" class="btn btn-secondary">View Gallery</a>
+        </div>
+      </div>
+    </header>
+
+    <section class="info-section">
+      <div class="info-grid">
+        <div class="info-card" *ngIf="barberInfo.phone">
+          <h3>📞 Phone</h3>
+          <p>{{ barberInfo.phone }}</p>
+        </div>
+        <div class="info-card" *ngIf="barberInfo.email">
+          <h3>📧 Email</h3>
+          <p>{{ barberInfo.email }}</p>
+        </div>
+        <div class="info-card" *ngIf="barberInfo.address">
+          <h3>📍 Address</h3>
+          <p>{{ barberInfo.address }}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="features">
+      <h2>Why Choose Us?</h2>
+      <div class="features-grid">
+        <div class="feature">
+          <div class="feature-icon">✂️</div>
+          <h3>Expert Cuts</h3>
+          <p>Professional barbering with years of experience</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">📅</div>
+          <h3>Easy Booking</h3>
+          <p>Schedule your appointment online instantly</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">⭐</div>
+          <h3>Quality Service</h3>
+          <p>Customer satisfaction is our priority</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

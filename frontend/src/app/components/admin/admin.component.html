@@ -1,0 +1,172 @@
+<div class="admin-container">
+  <header class="admin-header">
+    <h1>Admin Dashboard</h1>
+  </header>
+
+  <div *ngIf="message" class="alert" [class.alert-success]="message.type === 'success'" [class.alert-error]="message.type === 'error'">
+    {{ message.text }}
+  </div>
+
+  <nav class="admin-tabs">
+    <button [class.active]="activeTab === 'info'" (click)="activeTab = 'info'">Barber Info</button>
+    <button [class.active]="activeTab === 'portfolio'" (click)="activeTab = 'portfolio'">Portfolio</button>
+    <button [class.active]="activeTab === 'services'" (click)="activeTab = 'services'">Services</button>
+    <button [class.active]="activeTab === 'appointments'" (click)="activeTab = 'appointments'">Appointments</button>
+  </nav>
+
+  <!-- Barber Info Tab -->
+  <div *ngIf="activeTab === 'info'" class="tab-content">
+    <h2>Barber Information</h2>
+    <div *ngIf="barberInfo && !editingInfo" class="info-display">
+      <p><strong>Name:</strong> {{ barberInfo.name }}</p>
+      <p><strong>Bio:</strong> {{ barberInfo.bio }}</p>
+      <p><strong>Email:</strong> {{ barberInfo.email || 'Not set' }}</p>
+      <p><strong>Phone:</strong> {{ barberInfo.phone || 'Not set' }}</p>
+      <p><strong>Address:</strong> {{ barberInfo.address || 'Not set' }}</p>
+      <p><strong>Google Calendar ID:</strong> {{ barberInfo.googleCalendarId || 'Not set' }}</p>
+      <button class="btn btn-primary" (click)="startEditingInfo()">Edit</button>
+    </div>
+
+    <div *ngIf="editingInfo" class="form">
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" [(ngModel)]="editedInfo.name" />
+      </div>
+      <div class="form-group">
+        <label>Bio</label>
+        <textarea [(ngModel)]="editedInfo.bio" rows="4"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="editedInfo.email" />
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="tel" [(ngModel)]="editedInfo.phone" />
+      </div>
+      <div class="form-group">
+        <label>Address</label>
+        <input type="text" [(ngModel)]="editedInfo.address" />
+      </div>
+      <div class="form-group">
+        <label>Google Calendar ID</label>
+        <input type="text" [(ngModel)]="editedInfo.googleCalendarId" />
+      </div>
+      <div class="button-group">
+        <button class="btn btn-primary" (click)="saveBarberInfo()" [disabled]="loading">
+          {{ loading ? 'Saving...' : 'Save' }}
+        </button>
+        <button class="btn btn-secondary" (click)="editingInfo = false">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Portfolio Tab -->
+  <div *ngIf="activeTab === 'portfolio'" class="tab-content">
+    <h2>Portfolio Management</h2>
+    
+    <div class="form">
+      <h3>Add New Portfolio Item</h3>
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" [(ngModel)]="newPortfolio.title" />
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea [(ngModel)]="newPortfolio.description" rows="2"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Image URL</label>
+        <input type="text" [(ngModel)]="newPortfolio.imageUrl" />
+      </div>
+      <div class="form-group">
+        <label>Order</label>
+        <input type="number" [(ngModel)]="newPortfolio.order" />
+      </div>
+      <button class="btn btn-primary" (click)="addPortfolioItem()" [disabled]="loading">
+        {{ loading ? 'Adding...' : 'Add Item' }}
+      </button>
+    </div>
+
+    <div class="items-list">
+      <h3>Existing Items</h3>
+      <div *ngFor="let item of portfolioItems" class="item-card">
+        <img [src]="item.imageUrl" [alt]="item.title" class="item-image" />
+        <div class="item-details">
+          <h4>{{ item.title }}</h4>
+          <p>{{ item.description }}</p>
+          <small>Order: {{ item.order }}</small>
+        </div>
+        <button class="btn btn-danger" (click)="deletePortfolioItem(item.id)">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Services Tab -->
+  <div *ngIf="activeTab === 'services'" class="tab-content">
+    <h2>Service Types</h2>
+    
+    <div class="form">
+      <h3>Add New Service</h3>
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" [(ngModel)]="newService.name" />
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea [(ngModel)]="newService.description" rows="2"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Price</label>
+        <input type="number" [(ngModel)]="newService.price" step="0.01" />
+      </div>
+      <div class="form-group">
+        <label>Duration (minutes)</label>
+        <input type="number" [(ngModel)]="newService.durationMinutes" />
+      </div>
+      <button class="btn btn-primary" (click)="addServiceType()" [disabled]="loading">
+        {{ loading ? 'Adding...' : 'Add Service' }}
+      </button>
+    </div>
+
+    <div class="items-list">
+      <h3>Existing Services</h3>
+      <div *ngFor="let service of serviceTypes" class="item-card">
+        <div class="item-details">
+          <h4>{{ service.name }}</h4>
+          <p>{{ service.description }}</p>
+          <p><strong>Price:</strong> ${{ service.price }} | <strong>Duration:</strong> {{ service.durationMinutes }} min</p>
+          <p><strong>Status:</strong> {{ service.isActive ? 'Active' : 'Inactive' }}</p>
+        </div>
+        <button class="btn btn-danger" (click)="deleteServiceType(service.id)">Deactivate</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Appointments Tab -->
+  <div *ngIf="activeTab === 'appointments'" class="tab-content">
+    <h2>Appointments</h2>
+    
+    <div class="items-list">
+      <div *ngFor="let appointment of appointments" class="item-card">
+        <div class="item-details">
+          <h4>{{ appointment.customerName }}</h4>
+          <p><strong>Service:</strong> {{ appointment.serviceType }}</p>
+          <p><strong>Time:</strong> {{ formatDate(appointment.startTime) }}</p>
+          <p><strong>Email:</strong> {{ appointment.customerEmail }}</p>
+          <p *ngIf="appointment.customerPhone"><strong>Phone:</strong> {{ appointment.customerPhone }}</p>
+          <p *ngIf="appointment.notes"><strong>Notes:</strong> {{ appointment.notes }}</p>
+          <p><strong>Status:</strong> 
+            <select [(ngModel)]="appointment.status" (change)="updateAppointmentStatus(appointment.id, appointment.status)">
+              <option value="Pending">Pending</option>
+              <option value="Confirmed">Confirmed</option>
+              <option value="Cancelled">Cancelled</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </p>
+        </div>
+        <button class="btn btn-danger" (click)="deleteAppointment(appointment.id)">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
