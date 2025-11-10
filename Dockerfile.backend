@@ -1,0 +1,23 @@
+# Backend Dockerfile
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
+
+# Copy csproj and restore dependencies
+COPY ["backend/BarberApp.API/BarberApp.API.csproj", "backend/BarberApp.API/"]
+RUN dotnet restore "backend/BarberApp.API/BarberApp.API.csproj"
+
+# Copy everything else and build
+COPY backend/BarberApp.API/ backend/BarberApp.API/
+WORKDIR "/src/backend/BarberApp.API"
+RUN dotnet build "BarberApp.API.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "BarberApp.API.csproj" -c Release -o /app/publish
+
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "BarberApp.API.dll"]
