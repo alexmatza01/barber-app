@@ -1,0 +1,104 @@
+<div class="booking-container">
+  <header class="booking-header">
+    <h1>Book Your Appointment</h1>
+    <p>Choose your service and find the perfect time</p>
+  </header>
+
+  <div *ngIf="loading && serviceTypes.length === 0" class="loading">Loading...</div>
+  
+  <div *ngIf="error" class="alert alert-error">{{ error }}</div>
+  
+  <div *ngIf="success" class="alert alert-success">
+    <h3>✓ Appointment Booked Successfully!</h3>
+    <p>We've sent a confirmation email to {{ customerEmail }}.</p>
+    <button (click)="success = false" class="btn btn-primary">Book Another Appointment</button>
+  </div>
+
+  <div *ngIf="!success" class="booking-form">
+    <!-- Step 1: Select Service -->
+    <section class="form-section">
+      <h2>1. Select Service</h2>
+      <div class="service-grid">
+        <div *ngFor="let service of serviceTypes" 
+             class="service-card"
+             [class.selected]="selectedServiceTypeId === service.id"
+             (click)="selectedServiceTypeId = service.id; onServiceTypeChange()">
+          <h3>{{ service.name }}</h3>
+          <p *ngIf="service.description" class="description">{{ service.description }}</p>
+          <div class="service-details">
+            <span class="price">${{ service.price }}</span>
+            <span class="duration">{{ service.durationMinutes }} min</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 2: Select Date -->
+    <section class="form-section" *ngIf="selectedServiceTypeId">
+      <h2>2. Choose Date</h2>
+      <input type="date" 
+             class="date-input"
+             [(ngModel)]="selectedDate"
+             [min]="minDate"
+             (change)="onDateChange()" />
+    </section>
+
+    <!-- Step 3: Select Time -->
+    <section class="form-section" *ngIf="selectedDate && selectedServiceTypeId">
+      <h2>3. Pick Time Slot</h2>
+      <div *ngIf="loadingSlots" class="loading">Loading available times...</div>
+      <div *ngIf="!loadingSlots && availableSlots.length === 0" class="empty-state">
+        No available slots for this date. Please choose another date.
+      </div>
+      <div *ngIf="!loadingSlots && availableSlots.length > 0" class="slots-grid">
+        <button *ngFor="let slot of availableSlots"
+                class="slot-button"
+                [class.selected]="selectedSlot === slot"
+                (click)="selectSlot(slot)">
+          {{ formatTime(slot.startTime) }}
+        </button>
+      </div>
+    </section>
+
+    <!-- Step 4: Your Information -->
+    <section class="form-section" *ngIf="selectedSlot">
+      <h2>4. Your Information</h2>
+      <div class="form-group">
+        <label for="name">Name *</label>
+        <input type="text" 
+               id="name"
+               [(ngModel)]="customerName" 
+               required 
+               placeholder="John Doe" />
+      </div>
+      <div class="form-group">
+        <label for="email">Email *</label>
+        <input type="email" 
+               id="email"
+               [(ngModel)]="customerEmail" 
+               required 
+               placeholder="john@example.com" />
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone</label>
+        <input type="tel" 
+               id="phone"
+               [(ngModel)]="customerPhone" 
+               placeholder="(555) 123-4567" />
+      </div>
+      <div class="form-group">
+        <label for="notes">Special Requests</label>
+        <textarea id="notes"
+                  [(ngModel)]="notes" 
+                  rows="3"
+                  placeholder="Any special requests or notes..."></textarea>
+      </div>
+
+      <button class="btn btn-primary btn-large"
+              (click)="bookAppointment()"
+              [disabled]="loading">
+        {{ loading ? 'Booking...' : 'Confirm Booking' }}
+      </button>
+    </section>
+  </div>
+</div>

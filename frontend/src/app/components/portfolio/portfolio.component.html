@@ -1,0 +1,26 @@
+<div class="portfolio-container">
+  <header class="portfolio-header">
+    <h1>Our Work</h1>
+    <p>Check out some of our best cuts and styles</p>
+  </header>
+
+  <div *ngIf="loading" class="loading">Loading gallery...</div>
+  
+  <div *ngIf="error" class="error">{{ error }}</div>
+  
+  <div *ngIf="!loading && portfolioItems.length === 0" class="empty-state">
+    <p>No portfolio items available yet. Check back soon!</p>
+  </div>
+
+  <div *ngIf="!loading && portfolioItems.length > 0" class="portfolio-grid">
+    <div *ngFor="let item of portfolioItems" class="portfolio-item">
+      <div class="image-container">
+        <img [src]="item.imageUrl" [alt]="item.title" />
+      </div>
+      <div class="item-info">
+        <h3>{{ item.title }}</h3>
+        <p *ngIf="item.description">{{ item.description }}</p>
+      </div>
+    </div>
+  </div>
+</div>
