@@ -22,9 +22,21 @@ Before starting, make sure you have installed:
 
 ---
 
+## ⚠️ IMPORTANT: Backend Must Be Running First!
+
+Before opening the frontend, **you MUST start the backend first**. 
+
+**Quick Check:**
+1. Is the backend console window open and showing "Now listening on: http://localhost:5241"?
+2. Can you access http://localhost:5241/api/servicetypes in your browser and see JSON data?
+
+If NO to either question, go to **STEP 1** below and start the backend properly.
+
+---
+
 ## Step-by-Step Instructions
 
-### STEP 1: Start the Backend (.NET API)
+### STEP 1: Start the Backend (.NET API) 🔴 DO THIS FIRST!
 
 #### Option A: Using Visual Studio (Recommended)
 
@@ -55,6 +67,8 @@ Before starting, make sure you have installed:
 4. **Verify Backend is Running**
    - Open your browser and go to: http://localhost:5241/api/servicetypes
    - You should see JSON data with three service types (Haircut, Beard Trim, Hair & Beard)
+   - **✅ If you see JSON data, the backend is working correctly!**
+   - **❌ If you see "This site can't be reached", the backend is NOT running - go back to step 3**
 
 #### Option B: Using Command Line
 
@@ -75,28 +89,18 @@ Before starting, make sure you have installed:
 
 ---
 
-### STEP 2: Update Frontend API URL
+### STEP 2: Verify API URL Configuration (Already Done! ✅)
 
-**IMPORTANT:** Before running the frontend, we need to update the API URL to match the backend port.
+The frontend API URL has already been updated to point to the correct backend port.
 
-1. **Open the Frontend in VS Code**
-   - Launch Visual Studio Code
-   - Click "File" → "Open Folder"
-   - Navigate to: `barber-app/frontend`
-   - Click "Select Folder"
+**Current configuration:** The frontend is set to call `http://localhost:5241/api`
 
-2. **Update the API Service**
-   - In VS Code's Explorer panel (left side), navigate to:
-     `src/app/services/api.service.ts`
-   - Find line 17 which says:
-     ```typescript
-     private apiUrl = 'http://localhost:5000/api';
-     ```
-   - Change it to:
-     ```typescript
-     private apiUrl = 'http://localhost:5241/api';
-     ```
-   - Save the file (Ctrl+S or Cmd+S)
+You can verify this in `frontend/src/app/services/api.service.ts` line 17:
+```typescript
+private apiUrl = 'http://localhost:5241/api';
+```
+
+**No action needed** - this is already correct!
 
 ---
 
@@ -160,7 +164,54 @@ Before starting, make sure you have installed:
 
 ## Common Issues and Solutions
 
-### Issue 1: Backend won't start - "Unable to connect to database"
+### Issue 1: ERR_CONNECTION_REFUSED - Backend Not Running ⚠️
+
+**Symptoms:**
+- Frontend shows "Failed to load barber information" 
+- Browser Network tab shows: `ERR_CONNECTION_REFUSED` on `http://localhost:5241/api/barberinfo`
+- Console shows connection errors
+
+**This is the most common issue!** It means the backend API is not running.
+
+**Solution - Step by Step:**
+
+1. **Check if Backend is Running:**
+   - Look for a console window with .NET output
+   - OR in Visual Studio, check if the green "Start" button (▶) is available (means it's NOT running)
+   - If it's red "Stop" button (■), it IS running
+
+2. **Start the Backend Properly:**
+
+   **Using Visual Studio:**
+   - Open `backend/BarberApp.API/BarberApp.API.csproj`
+   - Press `F5` or click the green "Start" button
+   - Wait for console window to show: "Now listening on: http://localhost:5241"
+   - **DO NOT CLOSE THIS WINDOW** - it must stay open
+   
+   **Using Command Line:**
+   ```bash
+   cd barber-app/backend/BarberApp.API
+   dotnet run
+   ```
+   - Wait for: "Now listening on: http://localhost:5241"
+   - **Keep this terminal open**
+
+3. **Verify Backend is Actually Running:**
+   - Open browser and go to: **http://localhost:5241/api/servicetypes**
+   - You should see JSON with 3 services
+   - If you get an error page, the backend is NOT running yet
+
+4. **Common Mistakes:**
+   - ❌ Only opened the project but didn't press F5
+   - ❌ Closed the console window too early
+   - ❌ Backend crashed due to database error (see below)
+
+5. **If Backend Still Won't Start:**
+   - Check Visual Studio Output window for errors
+   - Look for "Error" messages in red
+   - Most common: Database connection issues (see next section)
+
+### Issue 2: Backend won't start - "Unable to connect to database"
 **Solution:**
 - Make sure SQL Server LocalDB is installed
 - The database will be created automatically on first run
