@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BarberApp.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8863e9ff09b44be06dd5d47db4a5276aae75bdd6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8e3f637d7fd71ae7687c5119aba9f74d5c29cecf")]
 [assembly: System.Reflection.AssemblyProductAttribute("BarberApp.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BarberApp.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
